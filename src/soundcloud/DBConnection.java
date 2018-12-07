@@ -8,12 +8,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 
 
 class DBConnection
@@ -76,7 +79,8 @@ class DBConnection
             rs = prestmt.executeQuery();
             rs.next();
             System.out.println(rs.getRow());
-            int account_id = rs.getInt("Account_ID");
+            
+            int account_id = rs.getInt("account_id");
             
             sql = "SELECT * from Account where ID = " + account_id ;
             prestmt = c.prepareStatement(sql);
@@ -158,7 +162,9 @@ class DBConnection
             {
                 ex.printStackTrace();
             }
-        }        
+        }
+        Subscription s = this.getSubscription(id);
+        u.setSub(s);
         return u;
     }
     boolean updateUser(User u)
@@ -182,10 +188,10 @@ class DBConnection
         }
         return false;
     }
-    
     boolean permanentlyDelete(int user_id)
     {
-        //working on this function
+        User u = this.getUser(user_id);
+        int account_id=0;
         this.runCommand();
         try
         {
@@ -195,37 +201,93 @@ class DBConnection
             prestmt = c.prepareStatement(sql);
             rs = prestmt.executeQuery();
             rs.next();
-            int account_id = rs.getInt("account_id");
-            
-            /*
-            Iterator<PlayList> iterator = u.user_playlists.iterator();
-            PlayList temp = null;
-            for (;iterator.hasNext(); temp = iterator.next())
-            {
-                Iterator<Song> songiterator = temp.songslist.iterator();
-                Song s = null;
-                for (;songiterator.hasNext(); s = songiterator.next())
-                {
-                    this.deleteSong(u, s);
-                    songiterator.remove();
-                }
-                iterator.remove();
-            }
-            */
-
-            
-            //delete account
-            //delete from users        
-            sql = "delete from Account where email = '" + email + "'";
+            account_id = rs.getInt("account_id");
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+            return false;
+        }
+        try
+        {
+            int playlist_id;
+            String added_by;
+            ResultSet x, y, z = null;
+            sql = "select * from UserPlaylist where user_id=" + user_id ;
             prestmt = c.prepareStatement(sql);
-            prestmt.executeUpdate();
-            return true;
+            x = prestmt.executeQuery();
+            if (!x.next()) 
+            {                            //if rs.next() returns false
+                System.out.println("No playlists found for user_id = " + user_id);
+            }
+            else 
+            {
+                do
+                {
+                    int song_id;
+                    playlist_id = x.getInt("playlist_id");
+                    sql = "select * from Playlist where playlist_id=" + playlist_id ;
+                    prestmt = c.prepareStatement(sql);
+                    y = prestmt.executeQuery();
+                    if (!y.next()) 
+                    {                            //if rs.next() returns false
+                        System.out.println("No songs found in playlist");
+                    }
+                    else 
+                    {
+                        do
+                        {
+                            song_id = y.getInt("song_id");
+                            sql = "select * from Songs where song_id=" + song_id ;
+                            prestmt = c.prepareStatement(sql);
+                            z = prestmt.executeQuery();
+                            if (!z.next()) 
+                            {
+                                System.out.println("Song not found in database against id = " + song_id);
+                            }
+                            else 
+                            {
+                                do
+                                {        
+                                    added_by = z.getString("added_by");
+                                    if (u.getEmail()==added_by)
+                                    {
+                                        sql = "delete from Songs where song_id = " + song_id ;
+                                        prestmt = c.prepareStatement(sql);
+                                        prestmt.executeUpdate();                                        
+                                    }
+                                } while (z.next());
+                            }            
+                        } while (y.next());
+                    }
+                    
+                    sql = "delete from UserPlaylist where playlist_id = " + playlist_id ;
+                    prestmt = c.prepareStatement(sql);
+                    prestmt.executeUpdate();                                        
+
+                } while (x.next());
+            }
         }
         catch (SQLException ex) 
         {
             ex.printStackTrace();
         }
-        return false;
+        try
+        {
+            sql = "delete from Users where userid = " + user_id;
+            prestmt = c.prepareStatement(sql);
+            prestmt.executeUpdate();                                        
+
+            sql = "delete from Account where id = " + account_id;
+            prestmt = c.prepareStatement(sql);
+            prestmt.executeUpdate();                                        
+        
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        return true;
     }
     void deletePlayList(User u, String playlist_name)
     {
@@ -270,5 +332,183 @@ class DBConnection
         {
             ex.printStackTrace();
         }
+    }
+    public ArrayList<SubscriptionPackages> getSubPackages()
+    {
+        ArrayList<SubscriptionPackages> subpackages = new ArrayList<SubscriptionPackages>();
+        this.runCommand();
+        try
+        {
+            sql = "select * from SubscriptionPackages";
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            String package_name;
+            double price;
+            if (!rs.next()) 
+            {                            //if rs.next() returns false
+                System.out.println("No subscription packages exist");
+            }
+            else 
+            {
+                do
+                {
+                    package_name = rs.getString("package_name");
+                    price = rs.getDouble("price");
+                    SubscriptionPackages sp = new SubscriptionPackages(package_name, price);
+                    subpackages.add(sp);
+                }while(rs.next());
+            }
+        }        
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        return subpackages;
+    }
+    public int getUserID(User u)
+    {
+        int userid = 0;
+        try
+        {
+            sql = "select * from Account where email='" + u.getEmail() + "'";
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            int account_id = rs.getInt("id");
+            
+            sql = "select * from Account where account_id=" + account_id;
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            userid = rs.getInt("userid");
+            
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return userid;
+    }
+    public Subscription getPastUserSubscriptions(User u)
+    {
+        Subscription sub = null;
+        int user_id = this.getUserID(u);
+        try
+        {
+            sql = "select * from UserSubscriptions where user_id = " + user_id;
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            String package_name = rs.getString("package_name");
+            String subscription_expiry = rs.getString("subscription_expiry");
+            
+            sql = "select * from SubscriptionPackages where package_name = '" + package_name + "'";
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            double price = rs.getDouble("package_name");
+            SubscriptionPackages subpackage = new SubscriptionPackages(package_name,price);
+            sub = new Subscription(user_id, subpackage, subscription_expiry);
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return sub;
+    }
+    public boolean setUserSubscription(User u, SubscriptionPackages sp)
+    {
+        int user_id = this.getUserID(u);
+        try
+        {
+            sql = "update UserSubscriptions set package_name=" + sp.getName() + "' , subscription_expiry = '" + u.sub.getSubscription_expiry() + "' where user_id = " + user_id;
+            prestmt = c.prepareStatement(sql);
+            prestmt.executeUpdate();
+                    
+            return true;
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        return false;       
+    }
+    public ResultSet getAllUsers()
+    {
+        rs = null;
+        this.runCommand();
+        User u = null;
+        try
+        {
+            sql = "select users.userid, account.name, account.email, account.mobile_number, account.blocked_until "
+                + "from Users "
+                + "join Account "
+                + "on Users.account_id = Account.id";                    
+            //System.out.println(sql);
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        
+        return rs;
+    }
+    public Subscription getSubscription(int user_id)
+    {
+        this.runCommand();
+        Subscription s = null;
+        sql = "select UserSubscriptions.user_id, UserSubscriptions.package_name, UserSubscriptions.subscription_expiry, subscriptionpackages.price "
+                + "from UserSubscriptions "
+                + "join subscriptionpackages "
+                + "on UserSubscriptions.package_name = subscriptionpackages.package_name";
+        try
+        {
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            String name = rs.getString("package_name");
+            double price = rs.getDouble("price");
+            String subscription_expiry = rs.getString("subscription_expiry");
+            
+            SubscriptionPackages sp = new SubscriptionPackages(name, price);
+            Subscription sub = new Subscription(user_id, sp, subscription_expiry);
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        return s;
+    }
+    public static DefaultTableModel buildTableModel(ResultSet x) 
+    {
+        try
+        {
+            ResultSetMetaData metaData = x.getMetaData();
+            // names of columns
+            Vector<String> columnNames = new Vector<String>();
+            int columnCount = metaData.getColumnCount();
+            for (int column = 1; column <= columnCount; column++) 
+            {
+                columnNames.add(metaData.getColumnName(column));
+            }
+
+            // data of the table
+            Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+            while (x.next()) {
+                Vector<Object> vector = new Vector<Object>();
+                for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                    vector.add(x.getObject(columnIndex));
+                }
+                data.add(vector);
+            }
+            return new DefaultTableModel(data, columnNames);
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }
