@@ -24,7 +24,7 @@ CREATE TABLE Users
 CREATE TABLE SubscriptionPackages 
 (
     id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
-    package_name varchar(30) NOT NULL,
+    package_name varchar(10) NOT NULL,
     price double NOT NULL
 );
 CREATE TABLE CustomerService 
@@ -69,9 +69,4 @@ CREATE TABLE UserPlaylist
 	playlist_id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
 	user_id int NOT NULL references USERS(USERID)
 );
-CREATE TABLE UserSubscriptions 
-(
-    user_id int NOT NULL references USERS(USERID),
-    package_name varchar(30) NOT NULL,
-    subscription_expiry varchar(30) NOT NULL
-);
+

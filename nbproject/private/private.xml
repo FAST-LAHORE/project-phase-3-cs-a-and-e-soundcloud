@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Ibrahim/Documents/NetBeansProjects/SoundCloud/src/soundcloud/Admin.java</file>
-            <file>file:/C:/Users/Ibrahim/Documents/NetBeansProjects/SoundCloud/src/soundcloud/database_connection.java</file>
-            <file>file:/C:/Users/Ibrahim/Documents/NetBeansProjects/SoundCloud/src/soundcloud/SoundCloud.java</file>
-            <file>file:/C:/Users/Ibrahim/Documents/NetBeansProjects/SoundCloud/src/soundcloud/User.java</file>
+            <file>file:/C:/JUNAID/NU/OOAD/project-phase-3-cs-a-and-e-soundcloud-code2/src/soundcloud/Account.java</file>
+            <file>file:/C:/JUNAID/NU/OOAD/project-phase-3-cs-a-and-e-soundcloud-code2/src/soundcloud/DBConnection.java</file>
+            <file>file:/C:/JUNAID/NU/OOAD/project-phase-3-cs-a-and-e-soundcloud-code2/src/soundcloud/Music_player.java</file>
+            <file>file:/C:/JUNAID/NU/OOAD/project-phase-3-cs-a-and-e-soundcloud-code2/src/soundcloud/Access_Song.java</file>
         </group>
     </open-files>
 </project-private>

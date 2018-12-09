@@ -20,6 +20,7 @@ public class SoundCloud {
     public static void main(String[] args) {
         // TODO code application logic here
         // System.out.println(System.getProperty("java.home"));
+        java.util.Date today = Date.from(Instant.EPOCH);
         //System.out.println(today);
         //conn.InsertAccount("patti", "patti@hotmale.com", "03356789", "4asd56kjs78dsf90", "3/12/18");
         //conn.InsertAccount("shozi", "shozi@hotmail.com", "03672339", "kjsdhfkjhdfg", "3/12/18");
@@ -29,9 +30,8 @@ public class SoundCloud {
         //admin.changePassword(1, "123");
         //admin.blockUser(2);
         DBConnection c = DBConnection.getInstance();
-//        User a = c.getUser(2);
-//        a.getPlaylists();
-//        admin.deleteUserAccount(2);
-        System.out.println("select * from UserSubscriptions join subscriptionpackages  where UserSubscriptions.package_name = subscriptionpackages.package_name");
+        User a = c.getUser(2);
+        a.getPlaylists();
+        admin.deleteUserAccount(2);
     }
 }

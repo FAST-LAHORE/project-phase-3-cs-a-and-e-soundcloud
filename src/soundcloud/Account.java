@@ -72,7 +72,7 @@ public class Account
         }
         else
         {
-            conn.permanentlyDelete(id);
+             conn.permanentlyDelete(id);                                         //--
         }
     }
 }
