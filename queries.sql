@@ -35,6 +35,7 @@ CREATE TABLE Feedback
 (
     feedbackID int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
     feedback_details varchar(255) NOT NULL,
+	song_id int NOT NULL,
     feedback_date varchar(15) NOT NULL, 
     UserID int REFERENCES Users(UserID)
 );
@@ -42,8 +43,9 @@ CREATE TABLE ResolvedFeedback
 (
     resolvedID int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
     feedback_details varchar(255) NOT NULL,
-    resolve_date varchar(15) NOT NULL, 
-    AdminID int REFERENCES Admin(AdminID)
+	song_id int NOT NULL,
+    feedback_date varchar(15) NOT NULL, 
+    resolve_date varchar(15) NOT NULL
 );
 CREATE TABLE SongManager 
 (	
@@ -54,7 +56,7 @@ CREATE TABLE Songs
 	song_id int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
 	singer varchar(255) NOT NULL,
 	title varchar(255) NOT NULL,
-	added_by varchar(255) NOT NULL,
+	added_by int NOT NULL,
 	premium int NOT NULL,	
 	path_to_file varchar(255) NOT NULL
 );

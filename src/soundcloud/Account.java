@@ -75,4 +75,25 @@ public class Account
             conn.permanentlyDelete(id);
         }
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMobile_number() {
+        return mobile_number;
+    }
+
+    public String getBlocked_until() {
+        return blocked_until;
+    }
+
+    public DBConnection getConn() {
+        return conn;
+    }
+    
 }

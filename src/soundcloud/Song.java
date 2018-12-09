@@ -12,28 +12,31 @@ package soundcloud;
 public class Song 
 {
     int song_id;
-    User added_by;
+    int added_by;
     String title;
     String Singer;
     boolean premium;
     String path_to_file;
-    public Song(User a, int song_id, String title, String Singer, boolean is_premium, String path_to_file) {
-        this.added_by = a;
+
+    public Song(int song_id, int added_by, String title, String Singer, boolean premium, String path_to_file) {
         this.song_id = song_id;
+        this.added_by = added_by;
         this.title = title;
         this.Singer = Singer;
-        this.premium = is_premium;
+        this.premium = premium;
         this.path_to_file = path_to_file;
     }
 
+    
     public String getTitle() {
         return title;
     }
 
-    public User getAdded_by() {
+    public int getAdded_by() {
         return added_by;
     }
 
+    
     public int getSong_id() {
         return song_id;
     }

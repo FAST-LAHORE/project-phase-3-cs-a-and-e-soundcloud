@@ -33,14 +33,15 @@ class Admin extends Account
     {
         this.changeAccountPassword(id, pass);
     }
-    public void blockUser(int id)
+    public String blockUser(int id, int days)
     {
         //String date = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());            
-        calendar.add(Calendar.DAY_OF_YEAR, 7);
+        calendar.add(Calendar.DAY_OF_YEAR, days);
         Date date = calendar.getTime();
         this.blocktheUser(id, new SimpleDateFormat("dd/MM/yyyy").format(date));
+        return new SimpleDateFormat("dd/MM/yyyy").format(date);
     }
     public void deleteUserAccount(int id)
     {

@@ -12,12 +12,18 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Properties;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
+
+import javax.mail.BodyPart;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 class DBConnection
 { 
@@ -142,12 +148,12 @@ class DBConnection
                                 prestmt = c.prepareStatement(sql);
                                 ss = prestmt.executeQuery();
                                 ss.next();
-                                String added_by = ss.getString("added_by");
+                                int added_by = ss.getInt("added_by");
                                 String title = ss.getString("title");
                                 String Singer = ss.getString("singer");
                                 boolean premium = ss.getBoolean("premium");
                                 String path_to_file = ss.getString("path_to_file");
-                                Song s = new Song(u, song_id, title, Singer, premium, path_to_file);
+                                Song s = new Song(song_id, added_by, title, Singer, premium, path_to_file);
 
                                 //added the song to playlist
                                 a.addSong(s);
@@ -164,7 +170,7 @@ class DBConnection
             }
         }
         Subscription s = this.getSubscription(id);
-        u.setSub(s);
+        u.updateTheSubscription(s);
         return u;
     }
     boolean updateUser(User u)
@@ -324,6 +330,10 @@ class DBConnection
         this.runCommand();
         try
         {
+            sql = "delete from Playlist where song_id = " + s.getSong_id();
+            prestmt = c.prepareStatement(sql);
+            prestmt.executeUpdate();
+    
             sql = "delete from Songs where added_by = " + s.added_by + " and added_by = '"+ u.getEmail() +"'";
             prestmt = c.prepareStatement(sql);
             prestmt.executeUpdate();
@@ -333,6 +343,7 @@ class DBConnection
             ex.printStackTrace();
         }
     }
+    public void addSubscription(){}
     public ArrayList<SubscriptionPackages> getSubPackages()
     {
         ArrayList<SubscriptionPackages> subpackages = new ArrayList<SubscriptionPackages>();
@@ -365,6 +376,21 @@ class DBConnection
         }
         return subpackages;
     }
+    public ResultSet getSubscriptionPackages()
+    {
+        this.runCommand();
+        try
+        {
+            sql = "select * from SubscriptionPackages";
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        return rs;
+    }
     public int getUserID(User u)
     {
         int userid = 0;
@@ -376,7 +402,7 @@ class DBConnection
             rs.next();
             int account_id = rs.getInt("id");
             
-            sql = "select * from Account where account_id=" + account_id;
+            sql = "select * from Users where account_id=" + account_id;
             prestmt = c.prepareStatement(sql);
             rs = prestmt.executeQuery();
             rs.next();
@@ -421,15 +447,28 @@ class DBConnection
         int user_id = this.getUserID(u);
         try
         {
-            sql = "update UserSubscriptions set package_name=" + sp.getName() + "' , subscription_expiry = '" + u.sub.getSubscription_expiry() + "' where user_id = " + user_id;
+            sql = "update UserSubscriptions "
+                    + "set package_name='" + sp.getName() + "' , subscription_expiry = '" + u.sub.getSubscription_expiry() + 
+                    "' where user_id = " + user_id;
             prestmt = c.prepareStatement(sql);
             prestmt.executeUpdate();
-                    
+            System.out.println("try");   
             return true;
         }
         catch (SQLException ex) 
         {
-            ex.printStackTrace();
+            try
+            {
+                sql = "insert into UserSubscriptions(user_id, package_name, subscription_expiry) values("+ user_id +",'"+sp.getName()+"','"+u.sub.getSubscription_expiry()+"')" ;
+                prestmt = c.prepareStatement(sql);
+                prestmt.executeUpdate();
+                System.out.println("catch");
+                return true;
+            }
+            catch (SQLException sss) 
+            {
+                sss.printStackTrace();
+            }
         }
         return false;       
     }
@@ -467,13 +506,15 @@ class DBConnection
         {
             prestmt = c.prepareStatement(sql);
             rs = prestmt.executeQuery();
-            rs.next();
-            String name = rs.getString("package_name");
-            double price = rs.getDouble("price");
-            String subscription_expiry = rs.getString("subscription_expiry");
-            
-            SubscriptionPackages sp = new SubscriptionPackages(name, price);
-            Subscription sub = new Subscription(user_id, sp, subscription_expiry);
+            if (rs.next())
+            {
+                String name = rs.getString("package_name");
+                double price = rs.getDouble("price");
+                String subscription_expiry = rs.getString("subscription_expiry");
+
+                SubscriptionPackages sp = new SubscriptionPackages(name, price);
+                Subscription sub = new Subscription(user_id, sp, subscription_expiry);
+            }
         }
         catch (SQLException ex) 
         {
@@ -511,4 +552,192 @@ class DBConnection
         }
         return null;
     }
-}
+    public void sendEmail(String from, String pass, String[] to, String subject, String body)
+    {
+        Properties props = System.getProperties();
+        String host = "smtp.gmail.com";
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.user", from);
+        props.put("mail.smtp.password", pass);
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+
+        Session session = Session.getDefaultInstance(props);
+        MimeMessage message = new MimeMessage(session);
+
+        try {
+//            message.setFrom(new InternetAddress(from));
+            InternetAddress[] toAddress = new InternetAddress[to.length];
+
+            // To get the array of addresses
+            for( int i = 0; i < to.length; i++ ) 
+            {
+                toAddress[i] = new InternetAddress(to[i]);
+            }
+            for( int i = 0; i < toAddress.length; i++) 
+            {
+                message.addRecipient(Message.RecipientType.TO, toAddress[i]);
+            }
+
+            message.setSubject(subject);
+            message.setText(body);
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, from, pass);
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
+        }
+        catch (AddressException ae) {
+            ae.printStackTrace();
+        }
+        catch (MessagingException me) {
+            me.printStackTrace();
+        }
+    }
+    public Song retrieveSong(int songID)
+    {
+        rs = null;
+        this.runCommand();
+        Song s = null;
+        try
+        {
+            sql = "select * "
+                + "from Songs "
+                + "where song_id = " + songID;
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            String singer = rs.getString("singer");
+            String title = rs.getString("title");
+            int added_by = rs.getInt("added_by");
+            boolean premium = rs.getBoolean("premium");
+            String path_to_file = rs.getString("path_to_file");
+            
+            s = new Song(songID, added_by, title, singer, premium, path_to_file);
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        
+        return s;
+    
+    }
+    public void deleteSong(int songID)
+    {
+        this.runCommand();
+        try
+        {
+            sql = "delete from Playlist where song_id = " + songID;
+            prestmt = c.prepareStatement(sql);
+            prestmt.executeUpdate();
+        
+            sql = "delete from Songs where song_id = " + songID;
+            prestmt = c.prepareStatement(sql);
+            prestmt.executeUpdate();
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+    }
+    public void removeFeedback(Feedback fb)
+    {
+        this.runCommand();
+        try
+        {
+            sql = "delete from Feedback where feedbackID = " + fb.getFeedback_id();
+            prestmt = c.prepareStatement(sql);
+            prestmt.executeUpdate();
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        } 
+    }
+    public void addtoResolvedFeedback(Feedback fb, String date)
+    {
+        this.runCommand();
+        try
+        {
+            String sql = "insert into ResolvedFeedback (feedback_details, song_id, feedback_date, resolve_date) values(?,?,?,?)";
+            System.out.println(sql);
+            PreparedStatement prestmt=c.prepareStatement(sql);
+            prestmt.setString(1, fb.getFeedback());
+            prestmt.setInt(2, fb.getSong_id());
+            prestmt.setString(3, fb.getFeedback_date());
+            prestmt.setString(4, date);
+            prestmt.executeUpdate();
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+    
+    }
+    public Feedback getFeedback(int songID)
+    {
+        Feedback fb = null;
+        this.runCommand();
+        try
+        {
+            sql = "select * from Feedback where song_id = " + songID;
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            String feedback = rs.getString("feedback_details");
+            int feedback_id = rs.getInt("feedbackid");
+            int song_id = rs.getInt("song_id");
+            int user_id = rs.getInt("userid");
+            String feedback_date = rs.getString("feedback_date");
+            fb = new Feedback(user_id, feedback_id, song_id, feedback_date, feedback);
+        
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        
+        return fb;
+    
+    }
+    public ResultSet getAllFeedback()
+    {
+        rs = null;
+        this.runCommand();
+        try
+        {
+            sql = "select feedbackid, feedback_details, songs.title as Song, feedback_date, account.name as Submitted_by"
+                    + " from Feedback "
+                    + "join Songs on feedback.song_id = songs.song_id "
+                    + "join Users on users.userid = feedback.userid "
+                    + "join Account on users.account_id = account.id";
+            
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }        
+        return rs;
+    }
+    public int getSongID(String name)
+    {
+        int song_id=-1;
+        this.runCommand();
+        try
+        {
+            sql = "select * from Songs where title = '" + name + "'";
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            song_id = rs.getInt("song_id");
+        }
+        catch (SQLException ex) 
+        {
+            ex.printStackTrace();
+        }
+        return song_id;
+    }
+}    

@@ -5,7 +5,10 @@
  */
 package soundcloud;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 /**
  *
  * @author Ibrahim
@@ -33,8 +36,16 @@ public class SubscriptionManager extends Account
         return conn.getSubPackages();    
     }
     void updateUserSubscription(User u, SubscriptionPackages sp)
-    {        
-        u.sub.updateSubscription(sp);
+    {   
+        int user_id = conn.getUserID(u);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MONTH, 1);
+        Date date = calendar.getTime();
+        String date_string = new SimpleDateFormat("dd/MM/yyyy").format(date);
+        Subscription subs = new Subscription(user_id, sp, date_string);
+        subs.subpackage = sp;
+        u.updateTheSubscription(subs);
         boolean status = conn.setUserSubscription(u, sp);
     }
     

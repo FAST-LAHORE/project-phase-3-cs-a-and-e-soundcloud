@@ -16,16 +16,36 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Ibrahim
  */
-
 public class ManageAccounts extends javax.swing.JFrame {
 
-    Admin admin = Admin.getInstance("sdf", "fsdf", "sfsfd", "dfs");
+    Admin admin = Admin.getInstance("Gul Nawaz", "fsdf", "sfsfd", "dfs");   //temporary
     DBConnection conn = DBConnection.getInstance();
+    DefaultTableModel dtm;
+    ResultSet x;
     /**
      * Creates new form ManageAccounts
      */
     public ManageAccounts() {
+        this.setResizable(false);
+        x = conn.getAllUsers();
+        dtm = DBConnection.buildTableModel(x);
         initComponents();
+        this.adminname.setText("Welcome " + admin.name);
+
+        
+//JScrollPane jsp = new JScrollPane(table);
+        
+//        JOptionPane.showMessageDialog(null, new JScrollPane(table));
+        
+    }
+
+    public ManageAccounts(Admin a) {
+        this.setResizable(false);
+        x = conn.getAllUsers();
+        dtm = DBConnection.buildTableModel(x);
+        initComponents();
+        this.adminname.setText("Welcome " + a.name);
+        
     }
 
     /**
@@ -37,29 +57,39 @@ public class ManageAccounts extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        adminname = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        UserDetails = new javax.swing.JTable();
-        UserList = new javax.swing.JButton();
+        userlist =  new JTable(dtm);
+        resetPassword = new javax.swing.JButton();
+        blockUser = new javax.swing.JButton();
+        deleteUser = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        UserDetails.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(UserDetails);
+        adminname.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        adminname.setText("Welcome");
 
-        UserList.setText("User List");
-        UserList.addActionListener(new java.awt.event.ActionListener() {
+        userlist.setAutoCreateColumnsFromModel(false);
+        jScrollPane1.setViewportView(userlist);
+
+        resetPassword.setText("Reset Password");
+        resetPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UserListActionPerformed(evt);
+                resetPasswordActionPerformed(evt);
+            }
+        });
+
+        blockUser.setText("Block User");
+        blockUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                blockUserActionPerformed(evt);
+            }
+        });
+
+        deleteUser.setText("Delete User");
+        deleteUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteUserActionPerformed(evt);
             }
         });
 
@@ -68,41 +98,139 @@ public class ManageAccounts extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 359, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(UserList)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                    .addComponent(adminname, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(resetPassword)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(blockUser, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(35, 35, 35)
+                            .addComponent(deleteUser, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 424, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(96, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(adminname, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(UserList)
-                .addGap(21, 21, 21))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(48, 48, 48)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(resetPassword)
+                    .addComponent(blockUser)
+                    .addComponent(deleteUser))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void UserListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UserListActionPerformed
+    private void resetPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetPasswordActionPerformed
         // TODO add your handling code here:
-        ResultSet x = conn.getAllUsers();
+        this.userlist.setRowSelectionAllowed(true);
+        int selected_row = this.userlist.getSelectedRow();
+        int user_id = (int) this.userlist.getValueAt(selected_row, 0);
+        String name = (String) this.userlist.getValueAt(selected_row, 1);
+        String email = (String) this.userlist.getValueAt(selected_row, 2);
         
+        JPasswordField pas = new JPasswordField(40);
+        JLabel abc = new JLabel("Enter new Password for name: " + name);
         
-        DefaultTableModel a = DBConnection.buildTableModel(x);
-        JTable table = new JTable(a);
+        int ok = JOptionPane.showConfirmDialog(null, pas,"Change Password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         
-    // Closes the Connection
+        if (ok==JOptionPane.OK_OPTION)
+        {
+            admin.changePassword(user_id, pas.getText());            
+            String[] Emails = new String[1];
+            Emails[0]=email;
+            String message = "Your account password has changed. \n Email: "+ email +"\n Password: "+pas.getText()+"\n";
+            JOptionPane.showMessageDialog(rootPane, "Password of " + name + " changed");
+            
+            //use real emails to actually send
+            String sender_email="";
+            String sender_password="";
+            
+            conn.sendEmail(sender_email, sender_password, Emails, "Password changed", message);
+            JOptionPane.showMessageDialog(rootPane, "Email notification sent to " + email + ".");
+        }
 
-        JOptionPane.showMessageDialog(null, new JScrollPane(table));
+    }//GEN-LAST:event_resetPasswordActionPerformed
 
-    }//GEN-LAST:event_UserListActionPerformed
+    private void blockUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_blockUserActionPerformed
+        // TODO add your handling code here:
+        int selected_row = this.userlist.getSelectedRow();
+        int user_id = (int) this.userlist.getValueAt(selected_row, 0);
+        String name = (String) this.userlist.getValueAt(selected_row, 1);
+        String email = (String) this.userlist.getValueAt(selected_row, 2);
+        JDialog.setDefaultLookAndFeelDecorated(true);
+        Object[] selectionValues = { "One Week", "One Month" };
+        String initialSelection = "One Week";
+        Object selection = JOptionPane.showInputDialog(null, "For how long do you want to block the User?","Block User", JOptionPane.QUESTION_MESSAGE, null, selectionValues, initialSelection);
+        String date="";
+        if (selection.toString().equals("One Week"))
+        {
+            date = admin.blockUser(user_id, 7);
+            this.userlist.setValueAt(date, selected_row, 4);
+            JOptionPane.showMessageDialog(rootPane, name + " has been blocked for " + selection.toString().toLowerCase() + ".");            
+            String[] Emails = new String[1];
+            Emails[0]=email;
+            String message = "Your account with email "+ email +"password has been blocked for "+ selection.toString().toLowerCase() + ".\n";
+            
+            //use real emails to actually send
+            String sender_email="";
+            String sender_password="";
+            
+            conn.sendEmail(sender_email, sender_password, Emails, "Password changed", message);
+            JOptionPane.showMessageDialog(rootPane, "Email notification sent to " + email + ".");
+        }
+        else
+        {
+            date = admin.blockUser(user_id, 30);     
+            this.userlist.setValueAt(date, selected_row, 4);
+            JOptionPane.showMessageDialog(rootPane, name + " has been blocked for " + selection.toString().toLowerCase() + ".");            
+            String[] Emails = new String[1];
+            Emails[0]=email;
+            String message = "Your account with email "+ email +"password has been blocked for "+ selection.toString().toLowerCase() + ".\n";
+            
+            //use real emails to actually send
+            String sender_email="";
+            String sender_password="";
+            
+            conn.sendEmail(sender_email, sender_password, Emails, "Password changed", message);
+            JOptionPane.showMessageDialog(rootPane, "Email notification sent to " + email + ".");
+        }
+        
+    }//GEN-LAST:event_blockUserActionPerformed
+
+    private void deleteUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteUserActionPerformed
+        // TODO add your handling code here:
+        int selected_row = this.userlist.getSelectedRow();
+        int user_id = (int) this.userlist.getValueAt(selected_row, 0);
+        String name = (String) this.userlist.getValueAt(selected_row, 1);
+        String email = (String) this.userlist.getValueAt(selected_row, 2);
+
+        int input = JOptionPane.showConfirmDialog(null, "Do you want to permanently delete "+ name +"?", "Select an Option...",
+				JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+        if (input == 1)
+        {
+            conn.permanentlyDelete(user_id);
+            String[] Emails = new String[1];
+            Emails[0]=email;
+            String message = "Your account with the following details has been deleted. \n Name: "+ name +" \n Email: "+ email +"\n\n\n Thankyou for using SoundCloud.";
+            JOptionPane.showMessageDialog(rootPane, "Account of " + name + " has been deleted");
+            
+            //use real emails to actually send
+            String sender_email="";
+            String sender_password="";
+            
+            conn.sendEmail(sender_email, sender_password, Emails, "Password changed", message);
+            JOptionPane.showMessageDialog(rootPane, "Email notification sent to " + email + ".");
+        }
+    }//GEN-LAST:event_deleteUserActionPerformed
 
     /**
      * @param args the command line arguments
@@ -140,8 +268,11 @@ public class ManageAccounts extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable UserDetails;
-    private javax.swing.JButton UserList;
+    private javax.swing.JLabel adminname;
+    private javax.swing.JButton blockUser;
+    private javax.swing.JButton deleteUser;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton resetPassword;
+    private javax.swing.JTable userlist;
     // End of variables declaration//GEN-END:variables
 }

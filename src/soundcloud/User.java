@@ -5,7 +5,10 @@
  */
 package soundcloud;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  *
@@ -30,14 +33,17 @@ public class User extends Account
     void setBlockDate(String b)
     {
         this.blocked_until = b;
-    }
-    String getName()
+    }    
+    @Override
+    public String getName()
     {
         return this.name;
     }
+    @Override
     public String getEmail() {
         return email;
     }
+    @Override
     public String getMobile_number() {
         return mobile_number;
     }
@@ -71,23 +77,18 @@ public class User extends Account
     public boolean Subscribe(SubscriptionPackages sp)
     {
         submanager.subscribeUser(this, sp);
-        
         String credit_card_no = null;
         double amount = 0.0;
         boolean status = this.makePayment(credit_card_no, amount);
         return status;
     }
     public boolean makePayment(String CreditCardNo, double amount)
-    {
-        
+    {        
         return true;
-        
     }
-    public String BrowsePackages()
+    public String SubPackage(SubscriptionPackages sp)
     {
-        ArrayList<SubscriptionPackages> packages = submanager.BrowsePackage(this);
-        SubscriptionPackages sp = null;
-
+//        ArrayList<SubscriptionPackages> packages = submanager.BrowsePackage(this);
         boolean status = this.Subscribe(sp);
 
         
@@ -102,8 +103,8 @@ public class User extends Account
         }
     }
 
-    public void setSub(Subscription sub) {
-        this.sub = sub;
+    public void updateTheSubscription(Subscription s)
+    {
+        this.sub = s;
     }
-
 }
