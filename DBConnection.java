@@ -71,13 +71,34 @@ class DBConnection
         return true;
     }
     
+    boolean getAccount(String em, String pass)
+    {
+        this.runCommand();
+        try
+        {
+            sql = "select * from Account where email='"+em+"' and password='"+pass+"'";
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            if (!rs.next())
+                return false;
+            else
+                return true;
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+            return false;
+        }
+    }
     void insertUser(String name, String email)
     {
         this.runCommand();
         try
         {
-            sql = "Select * from Account where name= " +name ;
+            prestmt = null;
+            sql = "Select id from Account where name= '"+name+"' and email= '"+email+"'" ;
             prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
             //rs = s.executeQuery(sql);
             rs.next();
             int id = rs.getInt("id");
@@ -92,6 +113,31 @@ class DBConnection
         }
     }
     
+    int getUserID(String email, String pass)
+    {
+        this.runCommand();
+        try
+        {
+            prestmt = null;
+            sql = "Select id from Account where email= '"+email+"' and password= '"+pass+"'";
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            int id = rs.getInt("Id");
+            sql = "Select UserID from Users where Account_ID="+id;
+            prestmt = c.prepareStatement(sql);
+            rs = prestmt.executeQuery();
+            rs.next();
+            id = rs.getInt("UserID");
+            return id;
+        }
+        catch(SQLException ex)
+        {
+            ex.printStackTrace();
+            return 0;
+        }
+    }
+    
     User getUser(int id)
     {
         this.runCommand();
@@ -102,7 +148,7 @@ class DBConnection
             prestmt = c.prepareStatement(sql);
             rs = prestmt.executeQuery();
             rs.next();
-            System.out.println(rs.getRow());
+            //System.out.println(rs.getRow());
             
             int account_id = rs.getInt("account_id");
             
@@ -187,8 +233,8 @@ class DBConnection
                 ex.printStackTrace();
             }
         }
-        Subscription s = this.getSubscription(id);
-        u.setSub(s);
+//        Subscription s = this.getSubscription(id);
+//        u.setSub(s);
         return u;
     }
     boolean updateUser(User u)

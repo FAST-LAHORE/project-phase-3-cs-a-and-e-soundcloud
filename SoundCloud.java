@@ -13,6 +13,7 @@ import java.util.Date;
  */
 public class SoundCloud {
 
+    public static User u;
     
     /**
      * @param args the command line arguments
@@ -32,6 +33,8 @@ public class SoundCloud {
 //        User a = c.getUser(2);
 //        a.getPlaylists();
 //        admin.deleteUserAccount(2);
-        System.out.println("select * from UserSubscriptions join subscriptionpackages  where UserSubscriptions.package_name = subscriptionpackages.package_name");
+        //System.out.println("select * from UserSubscriptions join subscriptionpackages  where UserSubscriptions.package_name = subscriptionpackages.package_name");
+        
+        StartPage st = new StartPage();
     }
 }

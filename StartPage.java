@@ -24,6 +24,10 @@ public class StartPage extends javax.swing.JFrame {
      */
     public StartPage() {
         initComponents();
+        Main.setVisible(true);
+        SignUpPanel.setVisible(false);
+        Right.setVisible(false);
+        this.setVisible(true);
     }
     
     
@@ -360,6 +364,29 @@ public class StartPage extends javax.swing.JFrame {
 
     private void LoginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginButtonActionPerformed
         // TODO add your handling code here:
+        if (selected == 1)
+        {
+            
+        }
+        else if (selected == 2)
+        {
+            String email = jTextField1.getText().toString();
+            char[] p = jPasswordField1.getPassword();
+            String pass = new String(p);
+            DBConnection db = DBConnection.getInstance();
+            boolean flag = db.getAccount(email, pass);
+            if (flag == true)
+            {
+                this.setVisible(false);
+                UserHome uh = new UserHome();
+                uh.setVisible(true);
+                int id = db.getUserID(email,pass);
+                SoundCloud.u = db.getUser(id);
+                //System.out.println(SoundCloud.u.name);
+            }
+            else
+                JOptionPane.showMessageDialog(this, "Email or Password not correct");
+        }
     }//GEN-LAST:event_LoginButtonActionPerformed
 
     private void SignUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SignUpButtonActionPerformed
@@ -398,8 +425,11 @@ public class StartPage extends javax.swing.JFrame {
             {
                 Account a1 = new Account(name,email,num,pass);
                 flag1 = db.InsertAccount(name, email, num, pass, "0");
+                if (flag1 == false)
+                    JOptionPane.showMessageDialog(this, "This Account already exists");
                 SignUpPanel.setVisible(false);
                 Main.setVisible(true);
+                db.insertUser(name, email);
             }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -447,11 +477,7 @@ public class StartPage extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                StartPage st = new StartPage();
-                st.Main.setVisible(true);
-                st.SignUpPanel.setVisible(false);
-                st.Right.setVisible(false);
-                st.setVisible(true);
+                
             }
         });
     }
