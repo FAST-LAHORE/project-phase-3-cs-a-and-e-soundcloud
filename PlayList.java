@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package soundcloud;
+package afra_sound_cloud;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,21 @@ import java.util.ArrayList;
  */
 public class PlayList 
 {
+    String name;
     ArrayList<Song> songslist = new ArrayList<Song>();
 
+    public PlayList(String name)
+    {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void addSong(Song s)
+    {
+        this.songslist.add(s);
+    }
     
 }

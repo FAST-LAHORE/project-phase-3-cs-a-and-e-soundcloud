@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package soundcloud;
+package afra_sound_cloud;
+
+import java.util.ArrayList;
 
 /**
  *
@@ -11,9 +13,95 @@ package soundcloud;
  */
 public class User extends Account
 {
+    ArrayList<PlayList> user_playlists = new ArrayList<PlayList>();
     public User(String name, String email, String mobile_number, String password) 
     {
         super(name, email, mobile_number, password);
     }
 
+    public User(String name, String email, String mobile_number, String password, String blocked_until) {
+        super(name, email, mobile_number, password, blocked_until);
+    }
+    
+    int get_ID(){
+        return id;
+    }
+    
+    void addPlayList(PlayList p){
+        user_playlists.add(p);
+    }
+    
+    Boolean addSongToPlaylist(Song s,PlayList p){
+        for(int i=0;i<user_playlists.size();i++)
+        {
+            if(user_playlists.get(i).name == p.name)
+            {
+                user_playlists.get(i).addSong(s);
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public ArrayList<PlayList> get_PlayList()
+    {
+        return user_playlists;
+    }
+    
+    int getPlaylistSize()
+    {
+        return user_playlists.size();
+    }
+    
+    void setPassword(String p)
+    {
+        this.password=p;
+    }
+    void setBlockDate(String b)
+    {
+        this.blocked_until = b;
+    }
+    String getName()
+    {
+        return this.name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMobile_number() {
+        return mobile_number;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getBlocked_until() {
+        return blocked_until;
+    }
+
+    public ArrayList<PlayList> getUser_playlists() {
+        return user_playlists;
+    }
+
+    public void setUser_playlists(ArrayList<PlayList> user_playlists) {
+        this.user_playlists = user_playlists;
+    }
+    public void getPlaylists()
+    {
+        if (this.user_playlists!=null)
+        {
+            for (int i=0;i<this.user_playlists.size();i++)
+            {
+                PlayList a = this.user_playlists.get(i);
+                System.out.println("Playlist #"+(i+1));
+                for (int j=0;j<a.songslist.size();j++)
+                {
+//                    //System.out.println(a.songslist.get(j).getTitle());
+                }
+            }
+        }
+    }
 }
