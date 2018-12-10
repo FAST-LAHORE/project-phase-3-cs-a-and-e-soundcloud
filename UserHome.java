@@ -6,6 +6,7 @@
 package soundcloud;
 
 import java.awt.Color;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -19,6 +20,7 @@ public class UserHome extends javax.swing.JFrame {
      */
     public UserHome() {
         initComponents();
+        EdPanel.setVisible(false);
     }
     
     private void setLabelColor(JPanel jPanel){
@@ -50,8 +52,19 @@ public class UserHome extends javax.swing.JFrame {
         EditPanel = new javax.swing.JPanel();
         EditLabel = new javax.swing.JLabel();
         Right = new javax.swing.JPanel();
+        EdPanel = new javax.swing.JPanel();
+        EdLabel = new javax.swing.JLabel();
+        NameLabel = new javax.swing.JLabel();
+        NameEdText = new javax.swing.JTextField();
+        PassLabel = new javax.swing.JLabel();
+        PassEdText = new javax.swing.JPasswordField();
+        MobileLabel = new javax.swing.JLabel();
+        MobileEdText = new javax.swing.JTextField();
+        UpdateButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
+        setResizable(false);
 
         Main.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -191,15 +204,85 @@ public class UserHome extends javax.swing.JFrame {
 
         Right.setBackground(new java.awt.Color(255, 255, 255));
 
+        EdPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        EdLabel.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        EdLabel.setForeground(new java.awt.Color(255, 153, 0));
+        EdLabel.setText("Edit Details");
+
+        NameLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        NameLabel.setText("Name");
+
+        PassLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        PassLabel.setText("Password");
+
+        MobileLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        MobileLabel.setText("Mobile");
+
+        UpdateButton.setBackground(new java.awt.Color(255, 255, 255));
+        UpdateButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        UpdateButton.setText("Update");
+        UpdateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout EdPanelLayout = new javax.swing.GroupLayout(EdPanel);
+        EdPanel.setLayout(EdPanelLayout);
+        EdPanelLayout.setHorizontalGroup(
+            EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(EdPanelLayout.createSequentialGroup()
+                .addGroup(EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EdPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(EdLabel))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EdPanelLayout.createSequentialGroup()
+                        .addContainerGap(43, Short.MAX_VALUE)
+                        .addGroup(EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(NameLabel)
+                            .addComponent(PassLabel)
+                            .addComponent(MobileLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                        .addGroup(EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(UpdateButton)
+                            .addGroup(EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(PassEdText)
+                                .addComponent(NameEdText)
+                                .addComponent(MobileEdText, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)))))
+                .addContainerGap())
+        );
+        EdPanelLayout.setVerticalGroup(
+            EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(EdPanelLayout.createSequentialGroup()
+                .addGap(76, 76, 76)
+                .addComponent(EdLabel)
+                .addGap(48, 48, 48)
+                .addGroup(EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(NameLabel)
+                    .addComponent(NameEdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(35, 35, 35)
+                .addGroup(EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(PassLabel)
+                    .addComponent(PassEdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39)
+                .addGroup(EdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(MobileLabel)
+                    .addComponent(MobileEdText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(38, 38, 38)
+                .addComponent(UpdateButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout RightLayout = new javax.swing.GroupLayout(Right);
         Right.setLayout(RightLayout);
         RightLayout.setHorizontalGroup(
             RightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 364, Short.MAX_VALUE)
+            .addComponent(EdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         RightLayout.setVerticalGroup(
             RightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(EdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout MainLayout = new javax.swing.GroupLayout(Main);
@@ -237,6 +320,7 @@ public class UserHome extends javax.swing.JFrame {
         resetLabelColor(BrSongPanel);
         resetLabelColor(BrAlbumPanel);
         resetLabelColor(EditPanel);
+        EdPanel.setVisible(false);
     }//GEN-LAST:event_TrendingListPanelMouseClicked
 
     private void BrSongPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BrSongPanelMouseClicked
@@ -245,6 +329,7 @@ public class UserHome extends javax.swing.JFrame {
         resetLabelColor(TrendingListPanel);
         resetLabelColor(BrAlbumPanel);
         resetLabelColor(EditPanel);
+        EdPanel.setVisible(false);
     }//GEN-LAST:event_BrSongPanelMouseClicked
 
     private void BrAlbumPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BrAlbumPanelMouseClicked
@@ -253,6 +338,7 @@ public class UserHome extends javax.swing.JFrame {
         resetLabelColor(TrendingListPanel);
         resetLabelColor(BrSongPanel);
         resetLabelColor(EditPanel);
+        EdPanel.setVisible(false);
     }//GEN-LAST:event_BrAlbumPanelMouseClicked
 
     private void EditPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EditPanelMouseClicked
@@ -261,7 +347,32 @@ public class UserHome extends javax.swing.JFrame {
         resetLabelColor(TrendingListPanel);
         resetLabelColor(BrAlbumPanel);
         resetLabelColor(BrSongPanel);
+        EdPanel.setVisible(true);
+        NameEdText.setText(SoundCloud.u.name);
+        PassEdText.setText(SoundCloud.u.password);
+        MobileEdText.setText(SoundCloud.u.mobile_number);
     }//GEN-LAST:event_EditPanelMouseClicked
+
+    private void UpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateButtonActionPerformed
+        // TODO add your handling code here:
+        String Name = NameEdText.getText().toString();
+        char[] p = PassEdText.getPassword();
+        String pass = new String(p);
+        String mob = MobileEdText.getText().toString();
+        SoundCloud.u.setName(Name);
+        SoundCloud.u.setPassword(pass);
+        SoundCloud.u.setNum(mob);
+        DBConnection db = DBConnection.getInstance();
+        boolean flag = db.updateUser(SoundCloud.u);
+        if (flag == true)
+        {
+            JOptionPane.showMessageDialog(this, "User updated Succesfully");
+            resetLabelColor(EditPanel);
+            EdPanel.setVisible(false);
+        }
+        else
+            JOptionPane.showMessageDialog(this, "User not Updated");
+    }//GEN-LAST:event_UpdateButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -303,13 +414,22 @@ public class UserHome extends javax.swing.JFrame {
     private javax.swing.JPanel BrAlbumPanel;
     private javax.swing.JLabel BrSongLabel;
     private javax.swing.JPanel BrSongPanel;
+    private javax.swing.JLabel EdLabel;
+    private javax.swing.JPanel EdPanel;
     private javax.swing.JLabel EditLabel;
     private javax.swing.JPanel EditPanel;
     private javax.swing.JPanel Left;
     private javax.swing.JPanel Main;
+    private javax.swing.JTextField MobileEdText;
+    private javax.swing.JLabel MobileLabel;
+    private javax.swing.JTextField NameEdText;
+    private javax.swing.JLabel NameLabel;
+    private javax.swing.JPasswordField PassEdText;
+    private javax.swing.JLabel PassLabel;
     private javax.swing.JPanel Right;
     private javax.swing.JLabel TrListLabel;
     private javax.swing.JPanel TrendingListPanel;
+    private javax.swing.JButton UpdateButton;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

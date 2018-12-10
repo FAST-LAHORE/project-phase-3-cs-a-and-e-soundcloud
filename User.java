@@ -23,9 +23,17 @@ public class User extends Account
     public User(String name, String email, String mobile_number, String password, String blocked_until) {
         super(name, email, mobile_number, password, blocked_until);
     }
+    void setName(String n)
+    {
+        this.name = n;
+    }
     void setPassword(String p)
     {
         this.password=p;
+    }
+    void setNum(String num)
+    {
+        this.mobile_number = num;
     }
     void setBlockDate(String b)
     {

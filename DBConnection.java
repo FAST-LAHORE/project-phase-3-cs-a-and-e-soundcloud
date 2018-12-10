@@ -247,7 +247,7 @@ class DBConnection
         String blocked_until = u.getBlocked_until();
         try
         {
-            sql = "update Account set password='" + pass + "' , blocked_until = '" + blocked_until + "' where email = '" + email + "'";
+            sql = "update Account set name='"+name+ "' , mobile_number='"+mob+ "', password='" + pass + "' , blocked_until = '" + blocked_until + "' where email = '" + email + "'";
             prestmt = c.prepareStatement(sql);
             prestmt.executeUpdate();
             return true;
